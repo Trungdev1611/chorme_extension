@@ -1,0 +1,15 @@
+/* * {
+  display: none !important;
+} */
+
+/* 1. Ẩn các thành phần nhiễu phổ biến thay vì ẩn tất cả (*) */
+header, footer, nav, aside, [role='navigation'], .sidebar, .ads {
+  display: none !important;
+}
+
+/* 2. Giới hạn chiều rộng bài viết và căn giữa */
+main, article, devsite-content {
+  display: block !important;
+  margin: 0 auto !important;
+  max-width: 750px !important;
+}

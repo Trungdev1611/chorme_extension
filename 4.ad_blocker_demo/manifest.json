@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Ad Blocker Demo",
+  "description": "Minh hoạ cách content_scripts + run_at hoạt động cho ad blocker",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["blocker.css"],
+      "js": ["blocker.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

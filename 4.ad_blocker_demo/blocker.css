@@ -1,0 +1,8 @@
+/* Chạy cùng document_start, ẩn ngay các selector quen thuộc của quảng cáo
+   trước khi trình duyệt kịp render chúng ra màn hình */
+[class*="ads"],
+[id*="google_ads"],
+[class*="advertisement"],
+iframe[src*="doubleclick.net"] {
+  display: none !important;
+}
