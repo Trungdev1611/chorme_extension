@@ -10,6 +10,13 @@ const quotaEl = document.getElementById('quota-warning');
 
 let vocabEntries = [];
 
+function formatDate(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
 function render(filter = '') {
   const q = filter.trim().toLowerCase();
   const filtered = vocabEntries.filter(
@@ -33,7 +40,16 @@ function render(filter = '') {
     meaningEl.className = 'meaning';
     meaningEl.textContent = entry.meaning || '(chưa có nghĩa)';
 
-    info.appendChild(wordEl);
+    const dateEl = document.createElement('span');
+    dateEl.className = 'date';
+    dateEl.textContent = formatDate(entry.createdAt);
+
+    const wordRow = document.createElement('div');
+    wordRow.className = 'word-row';
+    wordRow.appendChild(wordEl);
+    wordRow.appendChild(dateEl);
+
+    info.appendChild(wordRow);
     info.appendChild(meaningEl);
 
     const delBtn = document.createElement('button');
