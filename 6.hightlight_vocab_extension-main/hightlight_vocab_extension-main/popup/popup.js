@@ -7,6 +7,7 @@ const optionsLink = document.getElementById('options-link');
 const importBtn = document.getElementById('import-btn');
 const importFile = document.getElementById('import-file');
 const quotaEl = document.getElementById('quota-warning');
+const countEl = document.getElementById('count');
 
 let vocabEntries = [];
 
@@ -25,6 +26,9 @@ function render(filter = '') {
 
   listEl.innerHTML = '';
   emptyState.hidden = vocabEntries.length > 0;
+  countEl.textContent = q
+    ? `(${filtered.length}/${vocabEntries.length} từ)`
+    : `(${vocabEntries.length} từ)`;
 
   for (const entry of filtered) {
     const li = document.createElement('li');

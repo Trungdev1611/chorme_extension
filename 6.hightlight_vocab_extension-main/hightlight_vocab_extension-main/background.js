@@ -52,47 +52,33 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   const word = info.selectionText.trim();
   if (!word) return;
+  const sourceUrl = tab && tab.url ? tab.url : '';
 
-  let meaning = '';
+  // Preferred: non-modal panel inside the page; the content script saves the word itself.
   if (tab && tab.id !== undefined) {
     try {
-      const response = await chrome.tabs.sendMessage(tab.id, {
-        type: 'PROMPT_MEANING',
-        word
-      });
-      if (!response || response.meaning === null) return; // user cancelled
-      meaning = response.meaning;
+      await chrome.tabs.sendMessage(tab.id, { type: 'SHOW_ADD_PANEL', word, sourceUrl });
+      return;
     } catch (e) {
-      // content script not available on this page (e.g. chrome:// or webstore); fall back silently
+      // content script not available on this page (e.g. chrome:// or webstore); save without meaning
     }
   }
 
+  await saveWord(word, '', sourceUrl);
+});
+
+async function saveWord(word, meaning, sourceUrl) {
   try {
-    await VocabStorage.saveVocab({
-      word,
-      meaning,
-      sourceUrl: tab && tab.url ? tab.url : '',
-      createdAt: Date.now()
-    });
+    await VocabStorage.saveVocab({ word, meaning, sourceUrl, createdAt: Date.now() });
     notify('Đã lưu từ vựng', `"${word}" đã được thêm vào Extension Vocab.`);
-    const usage = await VocabStorage.getUsage();
-    if (usage.warn) {
-      notify(
-        'Sắp đầy bộ nhớ',
-        `Đã dùng ${Math.round(usage.ratio * 100)}% dung lượng. Hãy xuất JSON để sao lưu (popup > Xuất JSON).`
-      );
-    }
   } catch (err) {
     if (isQuotaError(err)) {
-      notify(
-        'Hết dung lượng đồng bộ',
-        'Không thể lưu thêm từ mới. Hãy xuất JSON để sao lưu rồi xoá bớt từ.'
-      );
+      notify('Hết dung lượng', 'Không thể lưu thêm từ mới. Hãy xuất JSON để sao lưu rồi xoá bớt từ.');
     } else {
       notify('Lỗi lưu từ vựng', String((err && err.message) || err));
     }
   }
-});
+}
 
 function isQuotaError(err) {
   const msg = String((err && err.message) || err || '');
