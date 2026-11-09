@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="levels">
+    <button data-level="0" id="lv0">Tắt</button>
+    <button data-level="1" id="lv1">Cấp 1</button>
+    <button data-level="2" id="lv2">Cấp 2</button>
+    <button data-level="3" id="lv3">Cấp 3</button>
+  </div>
+  <label class="dark">
+    <input type="checkbox" id="dark" />
+    <span>Nền tối đơn sắc (kiểu VS Code)</span>
+  </label>
+  <label class="dark">
+    <span>Theme</span>
+    <select id="theme">
+      <option value="dracula">Dracula Soft</option>
+      <option value="dark">Dark+</option>
+    </select>
+  </label>
+  <div id="msg" class="msg"></div>
+  <div class="hint">1: tên tab + icon · 2: khung code quanh trang · 3: chữ thành code</div>
+  <a href="#" id="options-link">Cài đặt</a>
+  <script src="popup.js"></script>
+</body>
+</html>

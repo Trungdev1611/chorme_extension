@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Cài đặt - Code Focus</title>
+<link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <h1>Cài đặt Code Focus</h1>
+
+  <p class="hint">
+    <b>Cấp 1:</b> chỉ đổi tên tab và icon.<br />
+    <b>Cấp 2:</b> cấp 1 + khung giao diện soạn code bao quanh trang (trang vẫn dùng bình thường). Hợp với trang tương tác như Study4.<br />
+    <b>Cấp 3:</b> cấp 2 + chữ của trang hiện thành dạng code có số dòng (chỉ đọc, ẩn trang thật). Hợp với trang chữ như Cambridge Dictionary.
+  </p>
+
+  <label class="field">
+    <span>Cấp độ mặc định (khi bấm phím tắt trên trang chưa có quy tắc)</span>
+    <select id="default-level">
+      <option value="1">Cấp 1</option>
+      <option value="2">Cấp 2</option>
+      <option value="3">Cấp 3</option>
+    </select>
+  </label>
+
+  <label class="field">
+    <span>Quy tắc theo trang (mỗi dòng: <code>domain=cấp</code>, có thể thêm <code>,dark</code>/<code>,light</code>, <code>,dracula</code>/<code>,darkplus</code> và/hoặc tên file, ví dụ <code>study4.com=2,dark,study4.ts</code>; cấp 0 = không tự bật)</span>
+    <textarea id="rules" rows="6" placeholder="study4.com=2,dark&#10;dictionary.cambridge.org=3"></textarea>
+  </label>
+
+  <label class="field checkbox">
+    <input type="checkbox" id="auto-apply" />
+    <span>Tự áp dụng khi mở trang có trong quy tắc</span>
+  </label>
+
+  <label class="field checkbox">
+    <input type="checkbox" id="fullscreen" />
+    <span>Vào toàn màn hình khi bật bằng phím tắt (ẩn thanh địa chỉ của Chrome)</span>
+  </label>
+
+  <label class="field checkbox">
+    <input type="checkbox" id="dark" />
+    <span>Nền tối đơn sắc kiểu VS Code cho trang ở cấp 2: bỏ màu mè, đổi font monospace, làm mờ ảnh (mặc định bật)</span>
+  </label>
+
+  <label class="field">
+    <span>Theme mặc định</span>
+    <select id="theme">
+      <option value="dracula">Dracula Soft (giống VS Code của bạn)</option>
+      <option value="dark">Dark+</option>
+    </select>
+  </label>
+
+  <label class="field">
+    <span>Tên project</span>
+    <input type="text" id="project" />
+  </label>
+
+  <label class="field">
+    <span>Tên file (để trống = tự lấy theo tên trang, ví dụ study4.js)</span>
+    <input type="text" id="file-name" />
+  </label>
+
+  <button id="save-btn">Lưu cài đặt</button>
+  <span id="save-status"></span>
+
+  <p class="hint">Phím tắt bật/tắt: <b>Alt+Shift+V</b> (đổi ở chrome://extensions/shortcuts). Bấm biểu tượng extension để chọn cấp độ bằng tay.</p>
+
+  <script src="options.js"></script>
+</body>
+</html>

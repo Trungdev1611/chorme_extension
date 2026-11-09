@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Code Focus",
+  "version": "1.0.0",
+  "description": "Đổi giao diện trang web theo 3 cấp độ, tuỳ từng trang.",
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Code Focus",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_popup": "popup/popup.html"
+  },
+  "commands": {
+    "toggle-disguise": {
+      "suggested_key": {
+        "default": "Alt+Shift+V"
+      },
+      "description": "Bật/tắt giao diện trên tab hiện tại"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_new_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
