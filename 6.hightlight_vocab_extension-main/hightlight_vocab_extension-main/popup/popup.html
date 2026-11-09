@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Extension Vocab</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="header">
+    <h1>Extension Vocab</h1>
+    <input type="text" id="search" placeholder="Tìm từ..." />
+  </div>
+  <div id="quota-warning" class="warn" hidden></div>
+  <ul id="vocab-list"></ul>
+  <div class="empty" id="empty-state" hidden>
+    Chưa có từ vựng nào. Bôi đen từ trên trang bất kỳ, chuột phải chọn "Thêm vào Extension Vocab".
+  </div>
+  <div class="footer">
+    <button id="export-btn">Xuất JSON</button>
+    <button id="import-btn">Nhập JSON</button>
+    <input type="file" id="import-file" accept="application/json,.json" hidden />
+    <button id="clear-btn" class="danger">Xoá tất cả</button>
+    <a href="#" id="options-link">Cài đặt</a>
+  </div>
+  <script src="../lib/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

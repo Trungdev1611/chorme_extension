@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArWsCV/auzkzIVmTcQYm5pJ/Nf+rDVxRJ1rDp7kQJvHgaP0w+zHzJaCwyQr075G0t2LxQS0ukEKfDv95ZwjXanLeQ0V07b3QJdSqVGquHQ6Sd5wtLevaGb2LguC56+sqcoJ6/v9hdJSb78IAhEsUfTJP1YzhOYGjQNMbQgnW1dc9M7exk2aoN/BHOzSPjptlb4NFn7EHUM2fzVY2+39WWtckRnBWumZxhItTnRta9TbIw3IsufK+UdFB4GgSv5hifebmT3yJXR4V0KdDaFsgpPUWhI15vigNd74xCuTJYN0NPk2++TDIZP85YUfWHol+BNCDZVvo0m8ZJUNBa/nQH6QIDAQAB",
+  "name": "Highlight Vocab - Học từ vựng tiếng Anh",
+  "version": "1.0.0",
+  "description": "Lưu từ vựng tiếng Anh qua menu chuột phải, tự động highlight trên mọi trang web, đồng bộ qua tài khoản Google.",
+  "permissions": ["contextMenus", "storage", "notifications", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["lib/storage.js", "content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_new_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

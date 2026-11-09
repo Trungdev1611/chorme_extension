@@ -1,0 +1,108 @@
+body {
+  width: 320px;
+  max-height: 480px;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: #222;
+}
+
+.header {
+  padding: 10px 12px 6px;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.header h1 {
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+
+.header input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#vocab-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.vocab-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.vocab-info strong {
+  display: block;
+}
+
+.meaning {
+  color: #666;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.delete-btn {
+  border: none;
+  background: none;
+  color: #c0392b;
+  cursor: pointer;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.empty {
+  padding: 16px 12px;
+  color: #777;
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid #eee;
+}
+
+.footer button {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+.footer .danger {
+  color: #c0392b;
+}
+
+.footer a {
+  margin-left: auto;
+  font-size: 12px;
+  color: #2980b9;
+  text-decoration: none;
+}
+
+.warn {
+  margin: 8px 12px;
+  padding: 6px 8px;
+  background: #fff3cd;
+  border: 1px solid #ffe08a;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #664d03;
+}

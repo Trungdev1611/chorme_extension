@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Cài đặt - Extension Vocab</title>
+<link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <h1>Cài đặt Extension Vocab</h1>
+
+  <label class="field">
+    <span>Màu highlight</span>
+    <input type="color" id="highlight-color" />
+  </label>
+
+  <label class="field">
+    <span>Domain tắt highlight (mỗi dòng 1 domain, ví dụ: facebook.com)</span>
+    <textarea id="disabled-domains" rows="5"></textarea>
+  </label>
+
+  <button id="save-btn">Lưu cài đặt</button>
+  <span id="save-status"></span>
+
+  <hr />
+  <h2>Đồng bộ qua GitHub Gist</h2>
+  <p class="hint">
+    Tạo token (classic, chỉ tick quyền <b>gist</b>) tại github.com/settings/tokens.
+    Dán token, bấm "Tạo Gist mới" (hoặc dán Gist ID có sẵn nếu đã có máy khác dùng), rồi "Lưu &amp; đồng bộ".
+  </p>
+  <label class="field">
+    <span>Token</span>
+    <input type="password" id="gist-token" placeholder="ghp_..." autocomplete="off" />
+  </label>
+  <label class="field">
+    <span>Gist ID</span>
+    <input type="text" id="gist-id" autocomplete="off" />
+  </label>
+  <button id="create-gist-btn">Tạo Gist mới</button>
+  <button id="sync-btn">Lưu &amp; đồng bộ</button>
+  <button id="cleanup-btn">Dọn từ cũ trong Chrome Sync</button>
+  <div id="sync-status" class="status"></div>
+  <div id="usage" class="status"></div>
+
+  <script src="../lib/config.js"></script>
+  <script src="../lib/storage.js"></script>
+  <script src="../lib/gist-sync.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

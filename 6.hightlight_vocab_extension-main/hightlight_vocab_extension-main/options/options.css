@@ -1,0 +1,65 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 480px;
+  margin: 24px auto;
+  color: #222;
+}
+
+h1 {
+  font-size: 18px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #444;
+}
+
+.field.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.field.checkbox span {
+  display: inline;
+  margin: 0;
+}
+
+textarea,
+input[type='text'],
+input[type='password'],
+input[type='color'] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+#save-status {
+  margin-left: 8px;
+  color: #2e7d32;
+  font-size: 13px;
+}
+
+h2 { font-size: 15px; margin-top: 24px; }
+.hint { font-size: 12px; color: #555; }
+.status { margin-top: 10px; font-size: 13px; }
+.status.err { color: #c62828; }
+.status.warn { color: #b26a00; }
+button + button { margin-left: 6px; }
