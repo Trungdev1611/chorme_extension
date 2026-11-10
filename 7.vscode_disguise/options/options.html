@@ -40,7 +40,22 @@
 
   <label class="field checkbox">
     <input type="checkbox" id="dark" />
-    <span>Nền tối đơn sắc kiểu VS Code cho trang ở cấp 2: bỏ màu mè, đổi font monospace, làm mờ ảnh (mặc định bật)</span>
+    <span>Nền tối đơn sắc kiểu VS Code cho trang ở cấp 2: bỏ nền màu, bo góc, đổ bóng (ảnh giữ nguyên; mặc định bật)</span>
+  </label>
+
+  <label class="field checkbox">
+    <input type="checkbox" id="hide-sidebar" />
+    <span>Ẩn khung thư mục (sidebar) mặc định. Bấm icon Explorer trên thanh trái để ẩn/hiện tạm thời.</span>
+  </label>
+
+  <label class="field checkbox">
+    <input type="checkbox" id="open-vscode" />
+    <span>Phím Ctrl+Shift+E (về VS Code): gọi <code>vscode://</code> để đưa VS Code lên, rồi thu nhỏ Chrome. Lần đầu Chrome hỏi xác nhận, hãy tích "luôn cho phép". Bỏ tích = chỉ thu nhỏ Chrome.</span>
+  </label>
+
+  <label class="field">
+    <span>Địa chỉ mở VS Code (mặc định <code>vscode://</code>; muốn đưa đúng cửa sổ project thì dùng <code>vscode://file/C:/code/ten-project</code>)</span>
+    <input type="text" id="vscode-url" />
   </label>
 
   <label class="field">
@@ -60,6 +75,11 @@
     <span>Tên file (để trống = tự lấy theo tên trang, ví dụ study4.js)</span>
     <input type="text" id="file-name" />
   </label>
+
+  <div class="field">
+    <span>Trang đã nhớ: <b id="remembered-count">0</b>. Trang nào bạn bật bằng popup hoặc phím tắt sẽ tự bật lại ở các lần mở sau, bật "Tắt" để quên trang đó.</span>
+    <button id="forget-btn" type="button">Quên tất cả trang đã nhớ</button>
+  </div>
 
   <button id="save-btn">Lưu cài đặt</button>
   <span id="save-status"></span>

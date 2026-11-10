@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 const msgEl = $('msg');
 const darkEl = $('dark');
 const themeEl = $('theme');
+const hideEl = $('hide-sidebar');
 
 async function getConfig() {
   const { config } = await chrome.storage.sync.get('config');
@@ -36,6 +37,7 @@ async function refresh() {
   const cfg = await getConfig();
   darkEl.checked = !!cfg.dark;
   themeEl.value = cfg.theme || 'dracula';
+  hideEl.checked = !!cfg.hideSidebar;
   const tab = await activeTab();
   if (!tab) return;
   try {
@@ -60,8 +62,8 @@ async function choose(level) {
       chrome.runtime.sendMessage({ type: 'FULLSCREEN', windowId: tab.windowId, on: false });
     } else {
       // remember the choice so the hotkey reuses it
-      await saveConfig({ defaultLevel: level, dark: darkEl.checked, theme: themeEl.value });
-      await send(tab.id, { type: 'APPLY', level, dark: darkEl.checked, theme: themeEl.value });
+      await saveConfig({ defaultLevel: level, dark: darkEl.checked, theme: themeEl.value, hideSidebar: hideEl.checked });
+      await send(tab.id, { type: 'APPLY', level, dark: darkEl.checked, theme: themeEl.value, hideSidebar: hideEl.checked });
       chrome.runtime.sendMessage({ type: 'FULLSCREEN', windowId: tab.windowId, on: true });
     }
     showLevel(level);
@@ -81,10 +83,22 @@ darkEl.addEventListener('change', async () => {
   if (active) choose(active);
 });
 
+hideEl.addEventListener('change', async () => {
+  await saveConfig({ hideSidebar: hideEl.checked });
+  const active = [1, 2, 3].find((n) => $('lv' + n).classList.contains('on'));
+  if (active) choose(active);
+});
+
 themeEl.addEventListener('change', async () => {
   await saveConfig({ theme: themeEl.value });
   const active = [1, 2, 3].find((n) => $('lv' + n).classList.contains('on'));
   if (active) choose(active);
+});
+
+$('vscode-btn').addEventListener('click', async () => {
+  const tab = await activeTab();
+  if (tab) chrome.runtime.sendMessage({ type: 'SWITCH_VSCODE', windowId: tab.windowId });
+  window.close();
 });
 
 $('options-link').addEventListener('click', (e) => {

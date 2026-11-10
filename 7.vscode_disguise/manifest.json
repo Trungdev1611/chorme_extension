@@ -40,6 +40,13 @@
         "default": "Alt+Shift+V"
       },
       "description": "Bật/tắt giao diện trên tab hiện tại"
+    },
+    "go-vscode": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Về VS Code thật (đưa VS Code lên, thu nhỏ Chrome)"
     }
   },
   "options_ui": {

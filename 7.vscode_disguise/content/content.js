@@ -17,6 +17,7 @@
     fullscreen: false,
     dark: true,
     theme: 'dracula',
+    hideSidebar: false,
     project: 'my-project',
     fileName: '',
     rules: ''
@@ -50,7 +51,29 @@
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#007ACC" d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg>'
     );
 
-  let current = null; // { cleanups: [fn] }
+  let current = null; // { cleanups: [fn], level, dark, theme }
+
+  // After the extension is reloaded, the old content script in an already-open tab is orphaned but still alive.
+  // A new copy asks the old one to undo its changes (leaving its state in a DOM attribute) so the two never
+  // stack two frames or fight over the title, then re-applies the same level.
+  document.dispatchEvent(new CustomEvent('vsd-takeover'));
+  let handoff = null;
+  try {
+    const raw = document.documentElement.getAttribute('data-vsd-state');
+    if (raw) handoff = JSON.parse(raw);
+  } catch (e) {
+    /* ignore */
+  }
+  document.documentElement.removeAttribute('data-vsd-state');
+  document.addEventListener('vsd-takeover', () => {
+    if (current) {
+      document.documentElement.setAttribute(
+        'data-vsd-state',
+        JSON.stringify({ level: current.level, dark: current.dark, theme: current.theme })
+      );
+    }
+    remove();
+  });
 
   // ---------- config ----------
   function getConfig() {
@@ -349,7 +372,7 @@
     }
     $('tab-name').textContent = cfg.fileName;
 
-    let sidebarOpen = true;
+    let sidebarOpen = !cfg.hideSidebar;
     const apply = () => {
       const left = ACT_W + (sidebarOpen ? SIDE_W : 0);
       host.style.setProperty('--left', left + 'px');
@@ -359,6 +382,11 @@
     $('act-explorer').addEventListener('click', () => {
       sidebarOpen = !sidebarOpen;
       apply();
+      // remember the choice for next time
+      chrome.storage.sync.get('config', (r) => {
+        const config = Object.assign({}, (r && r.config) || {}, { hideSidebar: !sidebarOpen });
+        chrome.storage.sync.set({ config });
+      });
     });
     apply();
     if (level === 3) buildEditor($('editor'));
@@ -429,18 +457,18 @@
       let css = `html:root{margin:${TITLE_H + TAB_H}px 0 ${STATUS_H}px ${left}px !important;${cfg.dark ? `background:${t.bg} !important;color-scheme:dark !important;` : ''}}`;
       if (cfg.dark) {
         // Flat, monochrome editor-like theme: keeps layout and interactivity, removes colourful styling.
+        // Backgrounds become the theme colour (not transparent) so floating popups/tooltips stay opaque and readable.
         // ":not(#vsd-x)" raises specificity (an id) so site stylesheets loaded later can't override it.
         const B = 'html:root body:not(#vsd-x)';
         const EX = ':not(mark):not(img):not(svg):not(video):not(canvas):not(picture):not(iframe)';
         css +=
           `${B}{background:${t.bg} !important}` +
-          `${B} *${EX}{background-color:transparent !important;background-image:none !important;` +
+          `${B} *${EX}{background-color:${t.bg} !important;background-image:none !important;` +
           `color:${t.fg} !important;font-family:'Segoe UI',system-ui,sans-serif !important;-webkit-text-fill-color:${t.fg} !important;` +
           `border-color:${t.border} !important;box-shadow:none !important;text-shadow:none !important;border-radius:0 !important}` +
           `${B} a${EX},${B} a *${EX}{color:${t.link} !important;-webkit-text-fill-color:${t.link} !important}` +
           `${B} button${EX},${B} select${EX},${B} textarea${EX},${B} input${EX}:not([type=checkbox]):not([type=radio]){` +
           `background-color:${t.field} !important;border:1px solid ${t.fieldBorder} !important;color:${t.fg} !important;-webkit-text-fill-color:${t.fg} !important}` +
-          `${B} img,${B} svg,${B} video,${B} canvas,${B} picture{filter:grayscale(.85) brightness(.9) !important;opacity:.8 !important}` +
           `${B} ::placeholder{color:${t.muted} !important}`;
       }
       return css;
@@ -454,6 +482,41 @@
       host.remove();
       style.remove();
     });
+  }
+
+  // ---------- remember per site ----------
+  // A site turned on by hand (popup / hotkey) is remembered, so every page of it opens already disguised.
+  const STATE_KEY = 'siteState';
+  const siteKey = () => location.hostname.toLowerCase().replace(/^www\./, '');
+
+  function readSiteStates() {
+    return new Promise((resolve) => {
+      try {
+        chrome.storage.sync.get(STATE_KEY, (r) => resolve((r && r[STATE_KEY]) || {}));
+      } catch (e) {
+        resolve({});
+      }
+    });
+  }
+
+  async function saveSiteState(entry) {
+    try {
+      const all = await readSiteStates();
+      if (entry) all[siteKey()] = entry;
+      else delete all[siteKey()];
+      chrome.storage.sync.set({ [STATE_KEY]: all });
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  async function findSiteState() {
+    const all = await readSiteStates();
+    const host = location.hostname.toLowerCase();
+    const keys = Object.keys(all)
+      .filter((k) => host === k || host.endsWith('.' + k))
+      .sort((a, b) => b.length - a.length);
+    return keys.length ? all[keys[0]] : null;
   }
 
   // ---------- wiring ----------
@@ -479,6 +542,7 @@
     }
     if (msg.type === 'OFF') {
       remove();
+      saveSiteState(null);
       sendResponse({ active: false });
       return;
     }
@@ -487,7 +551,9 @@
         const cfg = await getConfig();
         cfg.dark = !!msg.dark;
         if (msg.theme) cfg.theme = msg.theme;
+        if (typeof msg.hideSidebar === 'boolean') cfg.hideSidebar = msg.hideSidebar;
         apply(msg.level, cfg);
+        saveSiteState({ level: msg.level, dark: !!cfg.dark, theme: cfg.theme });
         sendResponse({ active: true, level: msg.level, dark: cfg.dark, theme: cfg.theme });
       })();
       return true;
@@ -496,11 +562,13 @@
       (async () => {
         if (current) {
           remove();
+          saveSiteState(null);
           sendResponse({ active: false });
           return;
         }
         const { cfg, level } = await configForThisPage();
         apply(level, cfg);
+        saveSiteState({ level, dark: !!cfg.dark, theme: cfg.theme });
         sendResponse({ active: true });
       })();
       return true;
@@ -509,12 +577,26 @@
 
   (async function init() {
     const cfg = await getConfig();
+    if (handoff && handoff.level >= 1) {
+      cfg.dark = !!handoff.dark;
+      if (handoff.theme) cfg.theme = handoff.theme;
+      apply(handoff.level, cfg);
+      return;
+    }
     if (!cfg.autoApply) return;
     const rule = ruleFor(location.hostname, cfg.rules);
     if (rule && rule.level > 0) {
       if (rule.dark !== null) cfg.dark = rule.dark;
       if (rule.theme) cfg.theme = rule.theme;
       apply(rule.level, cfg);
+    } else if (!rule) {
+      // no explicit rule: use what was last chosen by hand for this site
+      const saved = await findSiteState();
+      if (saved && saved.level >= 1) {
+        cfg.dark = !!saved.dark;
+        if (saved.theme) cfg.theme = saved.theme;
+        apply(saved.level, cfg);
+      }
     }
   })();
 })();

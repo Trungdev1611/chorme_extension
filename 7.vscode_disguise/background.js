@@ -79,3 +79,37 @@ chrome.runtime.onMessage.addListener((msg) => {
     if (cfg.fullscreen) setFullscreen(msg.windowId, msg.on).catch(() => {});
   });
 });
+
+// Quick way back to the real VS Code: minimise this Chrome window (VS Code is usually right behind it).
+// Optionally also fire vscode:// so the OS raises VS Code (Chrome may ask to confirm the first time).
+async function switchToVSCode(windowId) {
+  const cfg = await getConfig();
+  if (cfg.openVscode !== false) {
+    try {
+      // Ask the OS to open/raise VS Code. The tab is only a carrier for the vscode:// link and is closed afterwards.
+      const tab = await chrome.tabs.create({ url: cfg.vscodeUrl || 'vscode://', active: true });
+      setTimeout(() => chrome.tabs.remove(tab.id).catch(() => {}), 5000);
+      await new Promise((r) => setTimeout(r, 700)); // give the OS a moment to raise VS Code
+    } catch (e) {
+      /* fall through to minimising Chrome */
+    }
+  }
+  try {
+    const win = await chrome.windows.get(windowId);
+    // a fullscreen window can't go straight to minimized
+    if (win.state === 'fullscreen') await chrome.windows.update(windowId, { state: 'normal' });
+    await chrome.windows.update(windowId, { state: 'minimized' });
+  } catch (e) {
+    flashBadge('X', '#c62828');
+  }
+}
+
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command !== 'go-vscode') return;
+  const win = await chrome.windows.getLastFocused();
+  switchToVSCode(win.id);
+});
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg && msg.type === 'SWITCH_VSCODE') switchToVSCode(msg.windowId);
+});
