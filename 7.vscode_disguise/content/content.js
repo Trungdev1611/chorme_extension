@@ -460,7 +460,8 @@
         // Backgrounds become the theme colour (not transparent) so floating popups/tooltips stay opaque and readable.
         // ":not(#vsd-x)" raises specificity (an id) so site stylesheets loaded later can't override it.
         const B = 'html:root body:not(#vsd-x)';
-        const EX = ':not(mark):not(img):not(svg):not(video):not(canvas):not(picture):not(iframe)';
+        // web-highlight = highlight element of another extension: leave its own colours alone.
+        const EX = ':not(mark):not(web-highlight):not(web-highlight *):not(img):not(svg):not(video):not(canvas):not(picture):not(iframe)';
         css +=
           `${B}{background:${t.bg} !important}` +
           `${B} *${EX}{background-color:${t.bg} !important;background-image:none !important;` +
@@ -482,6 +483,23 @@
       host.remove();
       style.remove();
     });
+
+    // Level 2 keeps the real page usable, so make sure copying works on it: some sites (e.g. a read-only Slate editor)
+    // cancel the browser's copy and write their own empty selection, so Ctrl+C / "Copy" puts nothing on the clipboard.
+    // This capture-phase listener runs first and copies what is actually highlighted. Inputs and rich editors are left alone.
+    if (level === 2) {
+      const onCopy = (e) => {
+        const ae = document.activeElement;
+        if (ae && (ae.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))) return;
+        const text = String(getSelection() || '');
+        if (!text || !e.clipboardData) return;
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        e.clipboardData.setData('text/plain', text);
+      };
+      document.addEventListener('copy', onCopy, true);
+      cleanups.push(() => document.removeEventListener('copy', onCopy, true));
+    }
   }
 
   // ---------- remember per site ----------
